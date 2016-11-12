@@ -1,0 +1,27 @@
+version: '2'
+services:
+    icinga:
+        image: icinga/icinga2
+        volumes:
+            - "./etc_icinga2:/etc/icinga2"
+        ports:
+            - "3080:80"
+        environment:
+            - ICINGA2_FEATURE_GRAPHITE=true
+            - ICINGA2_FEATURE_GRAPHITE_HOST=graphite
+            - ICINGA2_FEATURE_GRAPHITE_PORT=2003
+        depends_on:
+            - graphite
+    graphite:
+        image: nickstenning/graphite
+        ports:
+            - "3081:80"
+    graphana:
+        image: grafana/grafana
+        environment:
+            - GF_METRICS_GRAPHITE_ADDRESS=graphite:2003
+        ports:
+            - "3000:3000"
+        depends_on:
+            - graphite
+
